@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState, useRef } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import debounce from "lodash/debounce";
 import Card from "./components/Card";
 import "./App.css";
 
@@ -47,23 +46,21 @@ function App() {
   /* Set Filter Data */
   const updateFilterData = useCallback(() => {
     console.log(sourceData);
-    debounce(() => {
-      // To Prevent so many re-renders if user input quickly
-      const filteredData = sourceData.filter(({ title, price }) =>
-        (title + price).toLowerCase().includes(filterText.toLowerCase())
-      ); // Simplified filtering logic
-      console.log(filteredData);
-      setFilterData(filteredData);
-    }, 500);
+    // To Prevent so many re-renders if user input quickly
+    const filteredData = sourceData.filter(({ title, price }) =>
+      (title + price).toLowerCase().includes(filterText.toLowerCase())
+    ); // Simplified filtering logic
+    console.log(filteredData);
+    setFilterData(filteredData);
   }, [sourceData, filterText]);
 
   /* Fetch Update Data depend on offset */
   const updateData = () => {
     console.log(offset.current);
-    offset.current += 20;
     fetchData(offset.current)
       .then((data) => setUpdateData(data.results))
       .catch((error) => console.log("Error:", error.message));
+    offset.current += 20;
   };
 
   useEffect(() => {
@@ -71,6 +68,10 @@ function App() {
       updateData(); //Call Only One Time
     };
   }, []);
+
+  useEffect(() => {
+    updateFilterData();
+  }, [sourceData]);
 
   return (
     <div className="container mx-auto mt-[40px]">
