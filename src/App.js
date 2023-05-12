@@ -57,10 +57,12 @@ function App() {
   /* Fetch Update Data depend on offset */
   const updateData = () => {
     console.log(offset.current);
-    fetchData(offset.current)
-      .then((data) => setUpdateData(data.results))
-      .catch((error) => console.log("Error:", error.message));
-    offset.current += 20;
+    if (filterText === "") {
+      fetchData(offset.current)
+        .then((data) => setUpdateData(data.results))
+        .catch((error) => console.log("Error:", error.message));
+      offset.current += 20;
+    }
   };
 
   useEffect(() => {
@@ -91,7 +93,7 @@ function App() {
         dataLength={sourceData.length}
         next={updateData}
         hasMore={true}
-        loader={<h4>Loading...</h4>}
+        loader={filterText === "" && <h4>Loading...</h4>}
       >
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 lg:gap-4 2xl:grid-cols-6 4xl:grid-cols-8 p-[40px]">
           {filterData.map((item, index) => (
